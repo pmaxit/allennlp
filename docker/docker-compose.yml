@@ -1,0 +1,27 @@
+version: "3.1"
+
+services:
+    notebook:
+        build:
+            context: ./
+            dockerfile: Dockerfile
+        image: daskdev/dask
+        hostname: notebook
+        ports:
+            - "8888:8888"
+            - "8787:8787"
+        
+        environment:
+            - PASSWORD=dreamz
+            - JUPYTER_TOKEN=dreamz
+            - PYTHONPATH=/home/jovyan/project
+        networks:
+            - dask_net
+
+        working_dir: /home/jovyan/project
+        volumes:
+            - ../:/home/jovyan/project
+
+networks:
+    dask_net:
+        driver: bridge

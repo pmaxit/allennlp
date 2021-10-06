@@ -13,6 +13,8 @@ from pytorch_lightning.loops.dataloader.evaluation_loop import EvaluationLoop
 from sklearn import model_selection
 from sklearn.metrics import mean_squared_error
 from src.transforms import *
+import ttach as tta
+
 
 import yaml
 Config = yaml.load(open('./config.yaml'))
@@ -131,9 +133,19 @@ class Trainer(pl.LightningModule):
 
     def test_step(self, batch, batch_idx):
         img, ftrs = batch
-        output = self.forward(img, ftrs)
+        if Config['tta']:
+            predictions = []
+            for transform in tta.aliases.d4_transform():
+                augmented_image = transform.augment_image(img)
+                output = self.forward(augmented_image, ftrs).squeeze(-1).cpu().numpy()
+                predictions.append(output)
+
+            output = np.stack(predictions,axis=-1)
+            output = torch.from_numpy(output)
+        else:
+            output = self.forward(img, ftrs).detach()
         
-        return {'predictions': output.detach()}
+        return {'predictions': output}
 
     def test_epoch_end(self, outputs) -> None:
         predictions = torch.stack([x['predictions'] for x in outputs])

@@ -16,5 +16,8 @@ lr: 1e-3
 T_max: 10
 min_lr: 1e-6
 patience_earlystop: 3
+
+# Special training arguments
 train_type: 'mix_up'
 lam: 0.8
+tta: True

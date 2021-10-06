@@ -1,39 +1,24 @@
-# getting base image
-FROM daskdev/dask-notebook
+FROM python:3.6.3-jessie
 
+ENV LC_ALL=C.UTF-8
+ENV LANG=C.UTF-8
 
+ENV PATH /usr/local/nvidia/bin/:$PATH
+ENV LD_LIBRARY_PATH /usr/local/nvidia/lib:/usr/local/nvidia/lib64
 
-# RUN DEBIAN_FRONTEND=noninteractive apt-get update -y --no-install-recommends && \
-RUN DEBIAN_FRONTEND=noninteractive apt-get update -y --no-install-recommends && \
-  apt-get install -y --no-install-recommends locales && \
-  locale-gen en_US.UTF-8 && \
-  apt-get install -y --no-install-recommends software-properties-common && \
-  apt-get install -y --no-install-recommends \
-        make \
-        automake \
-        libpq-dev \
-        libffi-dev \
-        gfortran \
-        g++ \
-        git \
-        libboost-program-options-dev \
-        libtool \
-        libxrender1 \
-        wget \
-        ca-certificates \
-        python3-pyqt5 \
-        pyqt5-dev-tools \
-        qttools5-dev-tools \
-        libgl1-mesa-glx \
-        libsm6 libxext6 ffmpeg libfontconfig1 libxrender1 libgl1-mesa-glx \
-        curl && \
-  apt-get clean -y && \
-  rm -rf /var/lib/apt/lists/*
+# Tell nvidia-docker the driver spec that we need as well as to
+# use all available devices, which are mounted at /usr/local/nvidia.
+# The LABEL supports an older version of nvidia-docker, the env
+# variables a newer one.
+ENV NVIDIA_VISIBLE_DEVICES all
+ENV NVIDIA_DRIVER_CAPABILITIES compute,utility
+LABEL com.nvidia.volumes.needed="nvidia_driver"
 
-COPY requirements.txt requirements.txt
-RUN pip install -r requirements.txt
-#RUN jupyter labextension install dask-labextension
+WORKDIR /stage/allennlp
 
-CMD ["echo","Hello world"]
-WORKDIR /home/jovyan/project
+RUN pip install allennlp
+RUN pip install allennlp-models
 
+LABEL maintainer="allennlp-contact@allenai.org"
+
+ENTRYPOINT ["allennlp"]

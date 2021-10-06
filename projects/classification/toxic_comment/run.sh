@@ -1,0 +1,2 @@
+#allennlp train --include-package data_reader --include-package model baseline.jsonnet -s tmp -f
+allennlp predict tmp/model.tar.gz test/toxic.json --include-package data_reader --include-package model --include-package test --predictor toxic --batch-size 4

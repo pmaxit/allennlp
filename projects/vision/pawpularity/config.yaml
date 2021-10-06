@@ -1,0 +1,20 @@
+seed: 2021
+debug: False
+num_folds: 5
+trn_folds: [0, ]
+batch_size: 12
+num_workers: 0
+img_size: 512
+model: 'efficientnet_b3'
+img_ftr_len: 500
+epochs: 15
+precision: 16
+weight_decay: 1e-6
+
+# learning
+lr: 1e-3
+T_max: 10
+min_lr: 1e-6
+patience_earlystop: 3
+train_type: 'mix_up'
+lam: 0.8

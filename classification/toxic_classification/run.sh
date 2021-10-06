@@ -1,0 +1,1 @@
+allennlp train baseline.jsonnet --include-package src -s tmp/run -f
